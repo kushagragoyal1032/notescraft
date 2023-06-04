@@ -1,0 +1,11 @@
+Mongodb
+
+
+brew install mongodb-community
+brew services start mongodb-community
+
+
+nodemon
+
+npm i -D nodemon  - install nodemon
+nodemon .\index.js  - run (start project)
