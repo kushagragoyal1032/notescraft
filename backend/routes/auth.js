@@ -21,16 +21,17 @@ router.post(
   async (req, res) => {
     // if there are errors here then it return bad request and errors
     const errors = validationResult(req);
+    let success = false;
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
     // check email exist already or not
     try {
-      let user = await User.findOne({ email: req.body.email }); // don't know is it searching on db?
+      let user = await User.findOne({ email: req.body.email }); // get all user info by email
       if (user) {
         return res
           .status(400)
-          .json({ errors: "Sorry this email is already exist!!" });
+          .json({success, errors: "Sorry this email is already exist!!" });
       }
 
       // excrypted the password...
@@ -48,9 +49,9 @@ router.post(
           id: user.id,
         },
       };
-      const JWTAuth = jwt.sign(data, JWT_SECRET);
-      // res.json(user);
-      res.json({ JWTAuth });
+      const authtoken = jwt.sign(data, JWT_SECRET);
+      success = true;
+      res.json({ success, authtoken });
     } catch (error) {
       console.log(error.message);
       res.status(500).send("Internal Server Error!!");
@@ -68,24 +69,25 @@ router.post(
   async (req, res) => {
     // if there are errors here then it return bad request and errors
     const errors = validationResult(req);
+    let success = false;
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, password } = req.body; // here we are using "destructuring"
     try {
-      let user = await User.findOne({ email });
+      let user = await User.findOne({ email }); // get all user info by email
       if (!user) {
         return res
           .status(400)
-          .json({ errors: "Please login with correct with creds!!" });
+          .json({ success, errors: "Please login with correct with creds!!" });
       }
 
       const passwordcompare = await bcrypt.compare(password, user.password);
       if (!passwordcompare) {
         return res
           .status(400)
-          .json({ errors: "Please login with correct with creds!!" });
+          .json({ success, errors: "Please login with correct with creds!!" });
       }
 
       // this use for show data in response
@@ -94,8 +96,9 @@ router.post(
           id: user.id,
         },
       };
-      const JWTAuth = jwt.sign(data, JWT_SECRET);
-      res.json({ JWTAuth });
+      const authtoken = jwt.sign(data, JWT_SECRET);
+      success = true;
+      res.json({ success, authtoken });
     } catch (error) {
       console.log(error.message);
       res.status(500).send("Internal Server Error!!");

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-const mongoURI = "mongodb://localhost:27017/notescraft";
+const mongoURI = "mongodb://localhost:27017/notescraft"; // 'notescraft' is db name
 
 // const connectToMongo = ()=>{
 //     mongoose.connect(mongoURI, ()=>{
